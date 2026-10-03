@@ -2,6 +2,7 @@ library flutter_common;
 
 // Theme
 export 'theme/app_theme.dart';
+export 'theme/frequency_theme.dart';
 export 'theme/app_colors.dart';
 export 'theme/app_text_styles.dart';
 

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_text_styles.dart';
 import 'base_card.dart';
 
 /// Game card component with scale animation and special styling.
@@ -18,7 +16,7 @@ class GameCard extends StatefulWidget {
   final VoidCallback? onTap;
   final double? width;
   final double? height;
-  
+
   const GameCard({
     super.key,
     this.imageUrl,
@@ -29,40 +27,51 @@ class GameCard extends StatefulWidget {
     this.width,
     this.height,
   });
-  
+
   @override
   State<GameCard> createState() => _GameCardState();
 }
 
-class _GameCardState extends State<GameCard> with SingleTickerProviderStateMixin {
+class _GameCardState extends State<GameCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   bool _isHovered = false;
-  
+
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 160),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.05,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
   }
-  
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller.duration = MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : const Duration(milliseconds: 160);
+    if (MediaQuery.disableAnimationsOf(context)) _controller.value = 0;
+  }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
       onEnter: (_) {
         setState(() => _isHovered = true);
-        _controller.forward();
+        if (!MediaQuery.disableAnimationsOf(context)) _controller.forward();
       },
       onExit: (_) {
         setState(() => _isHovered = false);
@@ -72,13 +81,15 @@ class _GameCardState extends State<GameCard> with SingleTickerProviderStateMixin
         animation: _scaleAnimation,
         builder: (context, child) {
           return Transform.scale(
-            scale: _scaleAnimation.value,
+            scale: MediaQuery.disableAnimationsOf(context)
+                ? 1
+                : _scaleAnimation.value,
             child: child,
           );
         },
         child: BaseCard(
           width: widget.width,
-          height: widget.height,
+          height: widget.height ?? 240,
           padding: EdgeInsets.zero,
           onTap: widget.onTap,
           enableHoverEffect: false, // We handle hover animation ourselves
@@ -91,7 +102,7 @@ class _GameCardState extends State<GameCard> with SingleTickerProviderStateMixin
                   child: _buildGameImage(),
                 ),
               ),
-              
+
               // Gradient overlay
               Positioned.fill(
                 child: Container(
@@ -109,7 +120,7 @@ class _GameCardState extends State<GameCard> with SingleTickerProviderStateMixin
                   ),
                 ),
               ),
-              
+
               // Title and tag
               Positioned(
                 left: 12,
@@ -121,7 +132,7 @@ class _GameCardState extends State<GameCard> with SingleTickerProviderStateMixin
                   children: [
                     Text(
                       widget.title,
-                      style: AppTextStyles.titleMedium.copyWith(
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -141,17 +152,20 @@ class _GameCardState extends State<GameCard> with SingleTickerProviderStateMixin
                         ),
                         child: Text(
                           widget.tag!,
-                          style: AppTextStyles.labelSmall.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.labelLarge
+                              ?.copyWith(
+                                color: widget.tag?.toLowerCase() == 'website'
+                                    ? Theme.of(context).colorScheme.onSecondary
+                                    : Theme.of(context).colorScheme.onPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                       ),
                     ],
                   ],
                 ),
               ),
-              
+
               // Hover border effect
               if (_isHovered)
                 Positioned.fill(
@@ -159,7 +173,7 @@ class _GameCardState extends State<GameCard> with SingleTickerProviderStateMixin
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: siteAccent,
+                        color: Theme.of(context).colorScheme.primary,
                         width: 2,
                       ),
                     ),
@@ -171,7 +185,7 @@ class _GameCardState extends State<GameCard> with SingleTickerProviderStateMixin
       ),
     );
   }
-  
+
   Widget _buildGameImage() {
     if (widget.imageProvider != null) {
       return Image(
@@ -189,30 +203,30 @@ class _GameCardState extends State<GameCard> with SingleTickerProviderStateMixin
       return _buildFallback();
     }
   }
-  
+
   Widget _buildFallback() {
     return Container(
-      color: surfaceDark,
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
       child: Center(
         child: Icon(
           Icons.videogame_asset,
           size: 64,
-          color: textTertiary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     );
   }
-  
+
   Color _getTagColor() {
-    if (widget.tag == null) return siteAccent;
-    
+    if (widget.tag == null) return Theme.of(context).colorScheme.primary;
+
     switch (widget.tag!.toLowerCase()) {
       case 'repository':
-        return const Color(0xFF4CAF50);
+        return Theme.of(context).colorScheme.primary;
       case 'website':
-        return const Color(0xFF2196F3);
+        return Theme.of(context).colorScheme.secondary;
       default:
-        return siteAccent;
+        return Theme.of(context).colorScheme.primary;
     }
   }
 }

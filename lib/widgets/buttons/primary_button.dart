@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_text_styles.dart';
 
 /// Primary button with consistent styling.
 class PrimaryButton extends StatelessWidget {
@@ -10,7 +8,7 @@ class PrimaryButton extends StatelessWidget {
   final bool isLoading;
   final double? width;
   final double? height;
-  
+
   const PrimaryButton({
     super.key,
     required this.text,
@@ -20,31 +18,35 @@ class PrimaryButton extends StatelessWidget {
     this.width,
     this.height,
   });
-  
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: width,
-      height: height ?? 48,
+      constraints: BoxConstraints(minHeight: height ?? 48),
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: surfaceDark,
-          disabledForegroundColor: textDisabled,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+          disabledBackgroundColor: Theme.of(
+            context,
+          ).colorScheme.surfaceContainerHighest,
+          disabledForegroundColor: Theme.of(
+            context,
+          ).colorScheme.onSurface.withValues(alpha: .38),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               )
             : Row(
@@ -55,10 +57,7 @@ class PrimaryButton extends StatelessWidget {
                     Icon(icon, size: 20),
                     const SizedBox(width: 8),
                   ],
-                  Text(
-                    text,
-                    style: AppTextStyles.button,
-                  ),
+                  Flexible(child: Text(text)),
                 ],
               ),
       ),
@@ -73,7 +72,7 @@ class SecondaryButton extends StatelessWidget {
   final IconData? icon;
   final double? width;
   final double? height;
-  
+
   const SecondaryButton({
     super.key,
     required this.text,
@@ -82,21 +81,19 @@ class SecondaryButton extends StatelessWidget {
     this.width,
     this.height,
   });
-  
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: width,
-      height: height ?? 48,
+      constraints: BoxConstraints(minHeight: height ?? 48),
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          foregroundColor: textPrimary,
-          side: BorderSide(color: borderColor),
+          foregroundColor: Theme.of(context).colorScheme.onSurface,
+          side: BorderSide(color: Theme.of(context).colorScheme.outline),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -106,10 +103,7 @@ class SecondaryButton extends StatelessWidget {
               Icon(icon, size: 20),
               const SizedBox(width: 8),
             ],
-            Text(
-              text,
-              style: AppTextStyles.button,
-            ),
+            Flexible(child: Text(text)),
           ],
         ),
       ),
@@ -122,33 +116,27 @@ class AppTextButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final IconData? icon;
-  
+
   const AppTextButton({
     super.key,
     required this.text,
     this.onPressed,
     this.icon,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
       style: TextButton.styleFrom(
-        foregroundColor: siteAccent,
+        foregroundColor: Theme.of(context).colorScheme.primary,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[
-            Icon(icon, size: 18),
-            const SizedBox(width: 6),
-          ],
-          Text(
-            text,
-            style: AppTextStyles.button.copyWith(color: siteAccent),
-          ),
+          if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 6)],
+          Flexible(child: Text(text)),
         ],
       ),
     );

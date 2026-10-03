@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
+import 'frequency_theme.dart';
 
 /// Material3 theme configuration for Flutter Common apps.
 ///
@@ -9,210 +10,18 @@ import 'app_text_styles.dart';
 
 class AppTheme {
   /// Dark theme (primary theme for all apps)
-  static ThemeData darkTheme() {
-    final colorScheme = ColorScheme(
-      brightness: Brightness.dark,
-      primary: AppColors.primary,
-      onPrimary: AppColors.onPrimary,
-      secondary: AppColors.secondary,
-      onSecondary: AppColors.onSecondary,
-      error: AppColors.error,
-      onError: AppColors.onError,
-      surface: AppColors.surface,
-      onSurface: AppColors.onSurface,
-      outline: AppColors.outline,
-      shadow: AppColors.shadow,
-      inverseSurface: AppColors.inverseSurface,
-      onInverseSurface: AppColors.onInverseSurface,
-      inversePrimary: AppColors.inversePrimary,
-    );
-    
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: colorScheme,
-      
-      // Primary colors
-      primaryColor: primaryColor,
-      canvasColor: canvasColor,
-      scaffoldBackgroundColor: scaffoldBackground,
-      dividerColor: siteDivider,
-      
-      // Card theme
-      cardTheme: CardThemeData(
-        color: cardBackground,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      
-      // App bar theme
-      appBarTheme: AppBarTheme(
-        backgroundColor: siteSurface,
-        foregroundColor: textPrimary,
-        elevation: 0,
-        centerTitle: false,
-        titleTextStyle: AppTextStyles.titleLarge,
-      ),
-      
-      // Text theme
-      textTheme: TextTheme(
-        displayLarge: AppTextStyles.displayLarge,
-        displayMedium: AppTextStyles.displayMedium,
-        displaySmall: AppTextStyles.displaySmall,
-        headlineLarge: AppTextStyles.headlineLarge,
-        headlineMedium: AppTextStyles.headlineMedium,
-        headlineSmall: AppTextStyles.headlineSmall,
-        titleLarge: AppTextStyles.titleLarge,
-        titleMedium: AppTextStyles.titleMedium,
-        titleSmall: AppTextStyles.titleSmall,
-        bodyLarge: AppTextStyles.bodyLarge,
-        bodyMedium: AppTextStyles.bodyMedium,
-        bodySmall: AppTextStyles.bodySmall,
-        labelLarge: AppTextStyles.labelLarge,
-        labelMedium: AppTextStyles.labelMedium,
-        labelSmall: AppTextStyles.labelSmall,
-      ),
-      
-      // Input decoration theme
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: siteSurface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: siteAccent, width: 2),
-        ),
-        labelStyle: AppTextStyles.bodyMedium,
-        hintStyle: AppTextStyles.bodyMedium.copyWith(color: textTertiary),
-      ),
-      
-      // Elevated button theme
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          textStyle: AppTextStyles.button,
-        ),
-      ),
-      
-      // Text button theme
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: siteAccent,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          textStyle: AppTextStyles.button,
-        ),
-      ),
-      
-      // Outlined button theme
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: textPrimary,
-          side: BorderSide(color: borderColor),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          textStyle: AppTextStyles.button,
-        ),
-      ),
-      
-      // Icon theme
-      iconTheme: IconThemeData(
-        color: textSecondary,
-        size: 24,
-      ),
-      
-      // Divider theme
-      dividerTheme: DividerThemeData(
-        color: siteDivider,
-        thickness: 1,
-        space: 1,
-      ),
-      
-      // Dialog theme
-      dialogTheme: DialogThemeData(
-        backgroundColor: siteSurface,
-        elevation: 8,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        titleTextStyle: AppTextStyles.headlineSmall,
-        contentTextStyle: AppTextStyles.bodyMedium,
-      ),
-      
-      // Snackbar theme
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: surfaceDark,
-        contentTextStyle: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      
-      // Bottom navigation bar theme
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: siteSurface,
-        selectedItemColor: siteAccent,
-        unselectedItemColor: textSecondary,
-        selectedLabelStyle: AppTextStyles.labelSmall,
-        unselectedLabelStyle: AppTextStyles.labelSmall,
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
-      ),
-      
-      // Navigation rail theme
-      navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: siteSurface,
-        selectedIconTheme: IconThemeData(color: siteAccent),
-        unselectedIconTheme: IconThemeData(color: textSecondary),
-        selectedLabelTextStyle: AppTextStyles.labelMedium.copyWith(color: siteAccent),
-        unselectedLabelTextStyle: AppTextStyles.labelMedium.copyWith(color: textSecondary),
-      ),
-      
-      // Drawer theme
-      drawerTheme: DrawerThemeData(
-        backgroundColor: siteSurface,
-        elevation: 16,
-      ),
-      
-      // List tile theme
-      listTileTheme: ListTileThemeData(
-        textColor: textPrimary,
-        iconColor: textSecondary,
-        selectedColor: siteAccent,
-        selectedTileColor: siteSelected,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    );
-  }
+  static ThemeData darkTheme() => FrequencyTheme.dark(fontFamily: 'SiteBody');
   
   /// Light theme (optional, for apps with theme switching)
   static ThemeData lightTheme() {
     final colorScheme = ColorScheme(
       brightness: Brightness.light,
       primary: primaryColor,
-      onPrimary: Colors.white,
+      onPrimary: siteBackground,
       secondary: siteAccent,
-      onSecondary: Colors.white,
+      onSecondary: siteBackground,
       error: errorColor,
-      onError: Colors.white,
+      onError: siteBackground,
       surface: Colors.white,
       onSurface: Color(0xFF1C1B2E),
       outline: Color(0xFFCAC5D7),

@@ -69,7 +69,7 @@ class AppTextStyles {
   
   static const titleMedium = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 16,
     fontWeight: FontWeight.w500,
     height: 1.5,
@@ -79,7 +79,7 @@ class AppTextStyles {
   
   static const titleSmall = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.43,
@@ -90,7 +90,7 @@ class AppTextStyles {
   // Body styles
   static const bodyLarge = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 16,
     fontWeight: FontWeight.w400,
     height: 1.5,
@@ -100,7 +100,7 @@ class AppTextStyles {
   
   static const bodyMedium = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 14,
     fontWeight: FontWeight.w400,
     height: 1.6,
@@ -110,7 +110,7 @@ class AppTextStyles {
   
   static const bodySmall = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.67,
@@ -121,7 +121,7 @@ class AppTextStyles {
   // Label styles
   static const labelLarge = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.43,
@@ -131,7 +131,7 @@ class AppTextStyles {
   
   static const labelMedium = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 12,
     fontWeight: FontWeight.w500,
     height: 1.33,
@@ -141,7 +141,7 @@ class AppTextStyles {
   
   static const labelSmall = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 11,
     fontWeight: FontWeight.w500,
     height: 1.45,
@@ -152,9 +152,9 @@ class AppTextStyles {
   // Legacy site styles (preserved for compatibility)
   static const siteBody = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     color: siteMuted,
-    fontSize: 14,
+    fontSize: 16,
     height: 1.6,
   );
   
@@ -168,7 +168,7 @@ class AppTextStyles {
   // Custom utility styles
   static const caption = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.5,
@@ -177,7 +177,7 @@ class AppTextStyles {
   
   static const overline = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 10,
     fontWeight: FontWeight.w500,
     height: 1.6,
@@ -187,7 +187,7 @@ class AppTextStyles {
   
   static const button = TextStyle(
     fontFamily: 'SiteBody',
-    fontFamilyFallback: ['WDXL'],
+    fontFamilyFallback: ['FrequencySans'],
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.43,
@@ -195,3 +195,7 @@ class AppTextStyles {
     color: textPrimary,
   );
 }
+
+// Legacy top-level names remain available through flutter_common.dart.
+const TextStyle siteBody = AppTextStyles.siteBody;
+const TextStyle siteHeading = AppTextStyles.siteHeading;

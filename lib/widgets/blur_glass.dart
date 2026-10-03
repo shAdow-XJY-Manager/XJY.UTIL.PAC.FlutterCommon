@@ -47,7 +47,7 @@ class _BlurGlassState extends State<BlurGlass> {
           margin: EdgeInsets.all(widget.marginValue ?? 20.0),
           padding: EdgeInsets.all(widget.paddingValue ?? 20.0),
           decoration: BoxDecoration(
-            color: Colors.transparent.withOpacity(0.2),
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: .82),
             borderRadius: BorderRadius.circular(30.0),
           ),
           child: widget.child,

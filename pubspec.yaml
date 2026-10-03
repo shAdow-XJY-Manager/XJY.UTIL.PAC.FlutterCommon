@@ -4,8 +4,8 @@ version: 0.0.1
 homepage: https://github.com/shAdow-XJY-Manager/XJY.UTIL.PAC.FlutterCommon
 
 environment:
-  sdk: ^3.9.2
-  flutter: ">=1.17.0"
+  sdk: ">=3.9.2 <4.0.0"
+  flutter: ">=3.35.0"
 
 dependencies:
   flutter:

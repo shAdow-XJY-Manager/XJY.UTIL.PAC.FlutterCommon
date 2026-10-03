@@ -32,36 +32,38 @@ class GradientProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double clampedValue = value.clamp(0.0, 1.0);
+    final clampedValue = value.isFinite ? value.clamp(0.0, 1.0) : 0.0;
 
-    return ClipRRect(
-      borderRadius: borderRadius,
-      child: Stack(
-        children: [
-          Container(
-            height: height,
-            color: Colors.grey.shade800,
-          ),
-          FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: clampedValue,
-            child: Container(
+    return Semantics(
+      label: '进度',
+      value: '${(clampedValue * 100).round()}%',
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        child: Stack(
+          children: [
+            Container(
               height: height,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.red,
-                    Colors.orange,
-                    Colors.yellow,
-                    Colors.green,
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
+            FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: clampedValue,
+              child: Container(
+                height: height,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.secondary,
+                      Theme.of(context).colorScheme.primary,
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

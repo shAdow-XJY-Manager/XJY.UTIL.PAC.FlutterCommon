@@ -1,135 +1,130 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:markdown/markdown.dart' as md;
 
-/// A markdown document viewer widget.
-///
-/// Loads and displays markdown content from asset files with
-/// customizable styling and GitHub-flavored markdown support.
-///
-/// Example:
-/// ```dart
-/// MdWidget(
-///   title: 'Documentation',
-///   path: 'assets/docs/readme.md',
-/// )
-/// ```
+/// Asset markdown reader. Respects the space supplied by its parent.
 class MdWidget extends StatefulWidget {
-  /// Title displayed above the markdown content
   final String title;
-
-  /// Asset path to the markdown file
   final String path;
-
-  const MdWidget({
-    super.key,
-    required this.title,
-    required this.path,
-  });
-
+  const MdWidget({super.key, required this.title, required this.path});
   @override
   State<MdWidget> createState() => _MdWidgetState();
 }
 
 class _MdWidgetState extends State<MdWidget> {
+  late Future<String> _document;
+  final ScrollController _scrollController = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    _document = rootBundle.loadString(widget.path);
+  }
+
+  @override
+  void didUpdateWidget(MdWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.path != widget.path) {
+      _document = rootBundle.loadString(widget.path);
+      if (_scrollController.hasClients) _scrollController.jumpTo(0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _retry() =>
+      setState(() => _document = rootBundle.loadString(widget.path));
+
+  Future<void> _openLink(String? href) async {
+    final uri = href == null ? null : Uri.tryParse(href);
+    if (uri == null) return;
+    try {
+      if (await launchUrl(uri)) return;
+    } catch (_) {
+      // Surface a failed launch below, including unsupported schemes.
+    }
+    if (!mounted) return;
+    ScaffoldMessenger.maybeOf(
+      context,
+    )?.showSnackBar(const SnackBar(content: Text('无法打开链接，请稍后重试')));
+  }
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
-    
     return Container(
-      margin: const EdgeInsets.all(0.0),
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-      width: size.width,
-      height: size.height,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: theme.canvasColor,
-        boxShadow: const [BoxShadow()],
-      ),
+      padding: const EdgeInsets.all(16),
+      color: theme.colorScheme.surface,
       child: FutureBuilder<String>(
-        future: rootBundle.loadString(widget.path),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return SingleChildScrollView(
-              controller: ScrollController(),
+        future: _document,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator(semanticsLabel: '加载文档'));
+          }
+          if (snapshot.hasError) {
+            return Center(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    widget.title,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 35,
-                      fontWeight: FontWeight.w900,
-                      shadows: [
-                        BoxShadow(
-                          blurRadius: 5,
-                          color: Colors.white.withOpacity(0.54),
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  MarkdownBody(
-                    data: snapshot.data!,
-                    selectable: true,
-                    softLineBreak: true,
-                    extensionSet: md.ExtensionSet(
-                      md.ExtensionSet.gitHubWeb.blockSyntaxes,
-                      md.ExtensionSet.gitHubWeb.inlineSyntaxes,
-                    ),
-                    onTapLink: (String linkPath, String? href, String title) {
-                      if (href != null) {
-                        launchUrl(Uri.parse(href));
-                      }
-                    },
-                    styleSheet: MarkdownStyleSheet(
-                      h1Padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      h2Padding: const EdgeInsets.symmetric(vertical: 3.0),
-                      h3Padding: const EdgeInsets.symmetric(vertical: 2.0),
-                      h4Padding: const EdgeInsets.symmetric(vertical: 1.5),
-                      h5Padding: const EdgeInsets.symmetric(vertical: 1.0),
-                      h6Padding: const EdgeInsets.symmetric(vertical: 0.5),
-                      h1: const TextStyle(
-                        fontSize: 45,
-                        fontWeight: FontWeight.w900,
-                      ),
-                      h2: const TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      h3: const TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      blockquote: const TextStyle(color: Colors.white),
-                      blockquotePadding: const EdgeInsets.symmetric(
-                        vertical: 20.0,
-                        horizontal: 20.0,
-                      ),
-                      blockquoteDecoration: BoxDecoration(
-                        color: Colors.white70.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      code: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Noto',
-                      ),
-                    ),
+                  const Icon(Icons.error_outline),
+                  const SizedBox(height: 12),
+                  const Text('文档暂时无法加载'),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: _retry,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('重试'),
                   ),
                 ],
               ),
             );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.purple,
-              ),
-            );
           }
+          if (!snapshot.hasData)
+            return const Center(
+              child: CircularProgressIndicator(semanticsLabel: '加载文档'),
+            );
+          return SingleChildScrollView(
+            controller: _scrollController,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 760),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(widget.title, style: theme.textTheme.headlineMedium),
+                    const SizedBox(height: 24),
+                    if (snapshot.data!.trim().isEmpty)
+                      const Text('文档暂无内容')
+                    else
+                      MarkdownBody(
+                        data: snapshot.data!,
+                        selectable: true,
+                        softLineBreak: true,
+                        extensionSet: md.ExtensionSet.gitHubWeb,
+                        onTapLink: (_, href, _) => _openLink(href),
+                        styleSheet: MarkdownStyleSheet.fromTheme(theme)
+                            .copyWith(
+                              p: theme.textTheme.bodyLarge?.copyWith(
+                                height: 1.7,
+                              ),
+                              blockquoteDecoration: BoxDecoration(
+                                color:
+                                    theme.colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
         },
       ),
     );

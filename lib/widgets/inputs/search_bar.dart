@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_text_styles.dart';
 
 /// Custom search bar component with consistent styling.
 class AppSearchBar extends StatefulWidget {
@@ -11,7 +9,7 @@ class AppSearchBar extends StatefulWidget {
   final TextEditingController? controller;
   final bool autofocus;
   final double? width;
-  
+
   const AppSearchBar({
     super.key,
     this.hintText,
@@ -22,7 +20,7 @@ class AppSearchBar extends StatefulWidget {
     this.autofocus = false,
     this.width,
   });
-  
+
   @override
   State<AppSearchBar> createState() => _AppSearchBarState();
 }
@@ -30,7 +28,7 @@ class AppSearchBar extends StatefulWidget {
 class _AppSearchBarState extends State<AppSearchBar> {
   late TextEditingController _controller;
   bool _hasText = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -38,60 +36,81 @@ class _AppSearchBarState extends State<AppSearchBar> {
     _controller.addListener(_onTextChanged);
     _hasText = _controller.text.isNotEmpty;
   }
-  
+
+  @override
+  void didUpdateWidget(AppSearchBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      _controller.removeListener(_onTextChanged);
+      if (oldWidget.controller == null) _controller.dispose();
+      _controller = widget.controller ?? TextEditingController();
+      _controller.addListener(_onTextChanged);
+      _hasText = _controller.text.isNotEmpty;
+    }
+  }
+
   @override
   void dispose() {
+    _controller.removeListener(_onTextChanged);
     if (widget.controller == null) {
       _controller.dispose();
     }
     super.dispose();
   }
-  
+
   void _onTextChanged() {
-    setState(() {
-      _hasText = _controller.text.isNotEmpty;
-    });
+    final hasText = _controller.text.isNotEmpty;
+    if (hasText != _hasText) setState(() => _hasText = hasText);
   }
-  
+
   void _clearText() {
     _controller.clear();
     widget.onClear?.call();
     widget.onChanged?.call('');
   }
-  
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       width: widget.width,
-      height: 48,
-      decoration: BoxDecoration(
-        color: siteSurface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: borderColor),
-      ),
+      constraints: const BoxConstraints(minHeight: 48),
       child: TextField(
         controller: _controller,
         autofocus: widget.autofocus,
-        style: AppTextStyles.bodyMedium.copyWith(color: textPrimary),
+        style: theme.textTheme.bodyLarge,
         decoration: InputDecoration(
-          hintText: widget.hintText ?? 'Search...',
-          hintStyle: AppTextStyles.bodyMedium.copyWith(color: textTertiary),
+          hintText: widget.hintText ?? '搜索',
+          hintStyle: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
           prefixIcon: Icon(
             Icons.search,
-            color: textSecondary,
+            color: theme.colorScheme.onSurfaceVariant,
             size: 20,
           ),
           suffixIcon: _hasText
               ? IconButton(
+                  tooltip: '清除搜索',
                   icon: Icon(
                     Icons.clear,
-                    color: textSecondary,
+                    color: theme.colorScheme.onSurfaceVariant,
                     size: 20,
                   ),
                   onPressed: _clearText,
                 )
               : null,
-          border: InputBorder.none,
+          filled: true,
+          fillColor: theme.colorScheme.surface,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: theme.colorScheme.outline),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+          ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 12,

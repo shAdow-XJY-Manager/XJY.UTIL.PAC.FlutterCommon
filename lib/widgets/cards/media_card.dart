@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_text_styles.dart';
 import 'base_card.dart';
 
 /// Media card component for displaying music, videos, comics, etc.
@@ -21,7 +19,7 @@ class MediaCard extends StatelessWidget {
   final double? width;
   final double? height;
   final double aspectRatio;
-  
+
   const MediaCard({
     super.key,
     this.imageUrl,
@@ -35,33 +33,33 @@ class MediaCard extends StatelessWidget {
     this.height,
     this.aspectRatio = 0.75, // Portrait by default
   });
-  
+
   @override
   Widget build(BuildContext context) {
+    final cover = ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          _buildCoverImage(context),
+          if (badge != null) _buildBadge(context),
+        ],
+      ),
+    );
     return BaseCard(
       width: width,
       height: height,
       padding: EdgeInsets.zero,
       onTap: onTap,
-      child: Column(
+      child: LayoutBuilder(builder: (context, constraints) => Column(
+        mainAxisSize: constraints.hasBoundedHeight ? MainAxisSize.max : MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cover image
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(8),
-              ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  _buildCoverImage(),
-                  if (badge != null) _buildBadge(),
-                ],
-              ),
-            ),
-          ),
-          
+          if (constraints.hasBoundedHeight)
+            Expanded(child: cover)
+          else
+            AspectRatio(aspectRatio: aspectRatio, child: cover),
+
           // Title and subtitle
           Padding(
             padding: const EdgeInsets.all(12),
@@ -71,7 +69,7 @@ class MediaCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: AppTextStyles.titleSmall,
+                  style: Theme.of(context).textTheme.titleSmall,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -79,8 +77,8 @@ class MediaCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle!,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: textTertiary,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -90,55 +88,55 @@ class MediaCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
-  
-  Widget _buildCoverImage() {
+
+  Widget _buildCoverImage(BuildContext context) {
     if (imageUrl != null) {
       return Image.network(
         imageUrl!,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildFallback(),
+        errorBuilder: (context, error, stackTrace) => _buildFallback(context),
       );
     } else if (assetImage != null) {
       return Image.asset(
         assetImage!,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildFallback(),
+        errorBuilder: (context, error, stackTrace) => _buildFallback(context),
       );
     } else {
-      return _buildFallback();
+      return _buildFallback(context);
     }
   }
-  
-  Widget _buildFallback() {
+
+  Widget _buildFallback(BuildContext context) {
     return Container(
-      color: surfaceDark,
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
       child: Center(
         child: Icon(
           fallbackIcon ?? Icons.image_outlined,
           size: 48,
-          color: textTertiary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     );
   }
-  
-  Widget _buildBadge() {
+
+  Widget _buildBadge(BuildContext context) {
     return Positioned(
       top: 8,
       right: 8,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: siteAccent,
+          color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(4),
         ),
         child: Text(
           badge!,
-          style: AppTextStyles.labelSmall.copyWith(
-            color: Colors.white,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),

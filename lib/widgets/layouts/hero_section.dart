@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_text_styles.dart';
 
 /// Hero section component for page headers.
 ///
@@ -17,7 +15,7 @@ class HeroSection extends StatelessWidget {
   final List<Widget>? actions;
   final double height;
   final Alignment alignment;
-  
+
   const HeroSection({
     super.key,
     required this.title,
@@ -28,75 +26,69 @@ class HeroSection extends StatelessWidget {
     this.height = 200,
     this.alignment = Alignment.centerLeft,
   });
-  
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
-      height: height,
+      constraints: BoxConstraints(minHeight: height),
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: backgroundColor ?? siteSurface,
-        image: backgroundImage != null
-            ? DecorationImage(
-                image: AssetImage(backgroundImage!),
-                fit: BoxFit.cover,
-              )
-            : null,
-      ),
+      color: backgroundColor ?? theme.colorScheme.surface,
       child: Stack(
         children: [
-          // Gradient overlay
-          if (backgroundImage != null)
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.6),
-                    Colors.black.withOpacity(0.8),
-                  ],
-                ),
+          if (backgroundImage != null) ...[
+            Positioned.fill(
+              child: Image.asset(
+                backgroundImage!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => const SizedBox.shrink(),
               ),
             ),
-          
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: alignment == Alignment.centerLeft
-                  ? CrossAxisAlignment.start
-                  : CrossAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.displaySmall,
-                  textAlign: alignment == Alignment.center
-                      ? TextAlign.center
-                      : TextAlign.left,
-                ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 8),
+            Positioned.fill(
+              child: ColoredBox(color: Colors.black.withValues(alpha: .75)),
+            ),
+          ],
+          Align(
+            alignment: alignment,
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: alignment == Alignment.centerLeft
+                    ? CrossAxisAlignment.start
+                    : CrossAxisAlignment.center,
+                children: [
                   Text(
-                    subtitle!,
-                    style: AppTextStyles.bodyLarge.copyWith(
-                      color: textSecondary,
+                    title,
+                    style: theme.textTheme.displaySmall?.copyWith(
+                      color: backgroundImage == null
+                          ? theme.colorScheme.onSurface
+                          : Colors.white,
                     ),
                     textAlign: alignment == Alignment.center
                         ? TextAlign.center
                         : TextAlign.left,
                   ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      subtitle!,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: backgroundImage == null
+                            ? theme.colorScheme.onSurfaceVariant
+                            : Colors.white,
+                      ),
+                      textAlign: alignment == Alignment.center
+                          ? TextAlign.center
+                          : TextAlign.left,
+                    ),
+                  ],
+                  if (actions != null && actions!.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Wrap(spacing: 12, runSpacing: 12, children: actions!),
+                  ],
                 ],
-                if (actions != null && actions!.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: actions!,
-                  ),
-                ],
-              ],
+              ),
             ),
           ),
         ],

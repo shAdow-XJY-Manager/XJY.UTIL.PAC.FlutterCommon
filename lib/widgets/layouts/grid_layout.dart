@@ -15,7 +15,7 @@ class ResponsiveGridLayout extends StatelessWidget {
   final int? mobileColumns;
   final int? tabletColumns;
   final int? desktopColumns;
-  
+
   const ResponsiveGridLayout({
     super.key,
     required this.children,
@@ -27,20 +27,23 @@ class ResponsiveGridLayout extends StatelessWidget {
     this.tabletColumns,
     this.desktopColumns,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final int columns = _getColumnCount(constraints.maxWidth);
-        
+        final scale = MediaQuery.textScalerOf(context).scale(16) / 16;
+        final int columns = _getColumnCount(
+          constraints.maxWidth / scale.clamp(1.0, 2.0),
+        ).clamp(1, 6);
+
         return GridView.builder(
           padding: padding ?? const EdgeInsets.all(16),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: columns,
             crossAxisSpacing: spacing,
             mainAxisSpacing: runSpacing,
-            childAspectRatio: childAspectRatio,
+            childAspectRatio: childAspectRatio > 0 ? childAspectRatio : .75,
           ),
           itemCount: children.length,
           itemBuilder: (context, index) => children[index],
@@ -48,7 +51,7 @@ class ResponsiveGridLayout extends StatelessWidget {
       },
     );
   }
-  
+
   int _getColumnCount(double width) {
     if (width >= 1200) {
       return desktopColumns ?? 5;
@@ -71,7 +74,7 @@ class ResponsiveListLayout extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
-  
+
   const ResponsiveListLayout({
     super.key,
     required this.children,
@@ -80,7 +83,7 @@ class ResponsiveListLayout extends StatelessWidget {
     this.shrinkWrap = false,
     this.physics,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return ListView.separated(

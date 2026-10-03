@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_text_styles.dart';
 import 'base_card.dart';
 
 /// Info card component for displaying information, settings, or details.
@@ -19,7 +17,7 @@ class InfoCard extends StatelessWidget {
   final bool compact;
   final Color? iconColor;
   final double? width;
-  
+
   const InfoCard({
     super.key,
     this.icon,
@@ -31,14 +29,12 @@ class InfoCard extends StatelessWidget {
     this.iconColor,
     this.width,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return BaseCard(
       width: width,
-      padding: compact 
-          ? const EdgeInsets.all(12)
-          : const EdgeInsets.all(16),
+      padding: compact ? const EdgeInsets.all(12) : const EdgeInsets.all(16),
       onTap: onTap,
       child: Row(
         children: [
@@ -47,18 +43,19 @@ class InfoCard extends StatelessWidget {
               width: compact ? 36 : 48,
               height: compact ? 36 : 48,
               decoration: BoxDecoration(
-                color: (iconColor ?? siteAccent).withOpacity(0.2),
+                color: (iconColor ?? Theme.of(context).colorScheme.primary)
+                    .withOpacity(0.2),
                 borderRadius: BorderRadius.circular(compact ? 6 : 8),
               ),
               child: Icon(
                 icon,
-                color: iconColor ?? siteAccent,
+                color: iconColor ?? Theme.of(context).colorScheme.primary,
                 size: compact ? 20 : 24,
               ),
             ),
             SizedBox(width: compact ? 12 : 16),
           ],
-          
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,17 +63,25 @@ class InfoCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: compact 
-                      ? AppTextStyles.titleSmall
-                      : AppTextStyles.titleMedium,
+                  style: compact
+                      ? Theme.of(context).textTheme.titleSmall
+                      : Theme.of(context).textTheme.titleMedium,
                 ),
                 if (description != null) ...[
                   SizedBox(height: compact ? 2 : 4),
                   Text(
                     description!,
                     style: compact
-                        ? AppTextStyles.bodySmall.copyWith(color: textTertiary)
-                        : AppTextStyles.bodyMedium.copyWith(color: textSecondary),
+                        ? Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          )
+                        : Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                     maxLines: compact ? 1 : 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -84,7 +89,7 @@ class InfoCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           if (trailing != null) ...[
             SizedBox(width: compact ? 8 : 12),
             trailing!,
@@ -92,7 +97,7 @@ class InfoCard extends StatelessWidget {
             SizedBox(width: compact ? 8 : 12),
             Icon(
               Icons.chevron_right,
-              color: textTertiary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               size: compact ? 20 : 24,
             ),
           ],
